@@ -1,15 +1,17 @@
 import streamlit as st
 import matplotlib.pyplot as plt
-from utils.processamento import carregar_dados, tendencia_estacional
 import pandas as pd
+from utils.processamento import carregar_dados, tendencia_estacional
 
-st.header("📉 Tendência de Extensão do Gelo por Estação")
+# Inicialização e configuração da página
+st.set_page_config(page_title="Tendência Sazonal do Gelo Marinho", layout="wide")
+st.title("🍂 Tendência Sazonal do Gelo Marinho")
 
 # Carregar dados e calcular tendência por estação
 df = carregar_dados()
 df_sazonal = tendencia_estacional(df)
 
-# Cores para cada estação
+# Configuração das cores para cada estação
 cores = {
     "Verão": "#d95f02",
     "Outono": "#7570b3",
@@ -17,43 +19,60 @@ cores = {
     "Primavera": "#e7298a"
 }
 
-# Gráfico geral com todas as estações
-st.subheader("Variação da Extensão Média do Gelo ao Longo dos Anos (por Estação)")
-fig, ax = plt.subplots(figsize=(13, 5))
-for estacao in ["Verão", "Outono", "Inverno", "Primavera"]:
-    dados = df_sazonal[df_sazonal["Estacao"] == estacao]
-    lw = 2.5 if estacao == "Verão" else 1.5
-    ax.plot(dados["Year"], dados["Extent"], label=estacao, color=cores[estacao], linewidth=lw)
+# Funções auxiliares
 
-# Anotação de destaque para o verão
-ax.annotate("🔻 Derretimento mais intenso no verão",
-            xy=(2015, df_sazonal[(df_sazonal["Year"] == 2015) & (df_sazonal["Estacao"] == "Verão")]["Extent"].values[0]),
+def plot_tendencia_estacoes(df_sazonal):
+    fig, ax = plt.subplots(figsize=(13, 5))
+
+    for estacao in cores:
+        dados = df_sazonal[df_sazonal["Estacao"] == estacao]
+        ax.plot(
+            dados["Year"],
+            dados["Extent"],
+            label=estacao,
+            color=cores[estacao],
+            linewidth=2.5 if estacao == "Verão" else 1.5
+        )
+
+    # Anotação destaque no verão
+    valor_2015_verao = df_sazonal.query("Year == 2015 and Estacao == 'Verão'")["Extent"].values
+    if valor_2015_verao.size > 0:
+        ax.annotate(
+            "↓ Derretimento mais intenso no verão",
+            xy=(2015, valor_2015_verao[0]),
             xytext=(2005, 10),
             arrowprops=dict(arrowstyle="->", color=cores["Verão"]),
-            fontsize=9, color=cores["Verão"], weight="bold")
+            fontsize=9, color=cores["Verão"], weight="bold"
+        )
 
-ax.set_xlabel("Ano")
-ax.set_ylabel("Extensão média (milhões km²)")
-ax.set_title("Tendência de Extensão do Gelo por Estação (1979–2024)")
-ax.grid(True)
-ax.legend(title="Estação")
-st.pyplot(fig)
+    ax.set(xlabel="Ano", ylabel="Extensão média (milhões km²)",
+           title="Tendência de Extensão do Gelo por Estação (1979–2024)")
+    ax.grid(True)
+    ax.legend(title="Estação")
 
-# Comparativo entre 1979 e 2024 por estação
+    st.pyplot(fig)
+
+# Plot geral
+st.subheader("Variação da Extensão Média do Gelo ao Longo dos Anos (por Estação)")
+plot_tendencia_estacoes(df_sazonal)
+
+# Comparativo 1979-2024 por estação
 st.markdown("#### 📊 Mudança média por estação (1979 → 2024)")
-for estacao in ["Verão", "Outono", "Inverno", "Primavera"]:
+for estacao in cores:
     dados = df_sazonal[df_sazonal["Estacao"] == estacao]
-    try:
-        inicio = dados[dados["Year"] == 1979]["Extent"].values[0]
-        fim = dados[dados["Year"] == 2024]["Extent"].values[0]
-        delta = fim - inicio
-        st.markdown(f"**{estacao}**: {delta:.2f} milhões km² {'📉' if delta < 0 else '📈'}")
-    except IndexError:
+    inicio = dados.query("Year == 1979")["Extent"].values
+    fim = dados.query("Year == 2024")["Extent"].values
+
+    if inicio.size > 0 and fim.size > 0:
+        delta = fim[0] - inicio[0]
+        icone = "📉" if delta < 0 else "📈"
+        st.markdown(f"**{estacao}**: {delta:.2f} milhões km² {icone}")
+    else:
         st.warning(f"⚠️ Dados ausentes para {estacao} em 1979 ou 2024.")
 
 # Gráfico interativo por estação
 st.markdown("#### 🔎 Explore uma estação específica")
-estacao_sel = st.selectbox("Escolha uma estação:", ["Verão", "Outono", "Inverno", "Primavera"])
+estacao_sel = st.selectbox("Escolha uma estação:", list(cores.keys()))
 dados_filtrados = df_sazonal[df_sazonal["Estacao"] == estacao_sel]
 st.line_chart(dados_filtrados.set_index("Year")["Extent"])
 
