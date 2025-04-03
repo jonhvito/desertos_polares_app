@@ -17,17 +17,30 @@ Através de dados climáticos e energéticos reais (NASA POWER, NSIDC), esta pla
 st.markdown("### 🔍 O que você encontrará nesta aplicação:")
 
 st.markdown("""
+            
+- 📅 **Evolução Histórica do Gelo**
+
+
 - **📈 Tendências Sazonais:**  
-  Análise da extensão do gelo marinho ao longo das décadas, separada por estações do ano.
+  -Análise da extensão do gelo marinho ao longo das décadas, separada por estações do ano.
+  
 
 - **📊 Energia e Clima:**  
-  Gráficos interativos com dados de radiação solar, ventos, temperatura e outros fatores climáticos.
+  -Gráficos interativos com dados de radiação solar, ventos, temperatura e outros fatores climáticos.
+
 
 - **📍 Mapa Energético:**  
-  Mapa geográfico com pontos de coleta de dados, destacando locais com potencial energético renovável.
+  -Mapa geográfico com pontos de coleta de dados, destacando locais com potencial energético renovável.
+  
 
 - **🧭 Comparação Energética:**  
-  Comparação direta entre dois anos para qualquer variável climática ou energética.
+  -Comparação direta entre dois anos para qualquer variável climática ou energética.
+  
+  
+  
+- 🔮 **Simulador de Cenário Futuro**:  
+  - Ferramenta interativa para visualizar possíveis cenários futuros com base em alterações climáticas previstas.
+
 
 """)
 
@@ -41,4 +54,4 @@ st.markdown("""
 """)
 
 # Chamada final
-st.info("Utilize o menu lateral à esquerda para navegar pelas seções. Boa exploração!")
+st.info("Utilize o menu lateral à esquerda para navegar pelas seções. **Boa exploração!**")

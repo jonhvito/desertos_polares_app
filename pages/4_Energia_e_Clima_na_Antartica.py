@@ -56,7 +56,7 @@ st.markdown("### 📍 Estação McMurdo – Local de Referência dos Dados")
 st.image("data/maxresdefault.jpg", caption="Estação McMurdo, Antártica. Latitude: -77.85° | Longitude: 166.67°", use_column_width=True)
 
 # Tabela comparativa recente
-st.markdown("### 📊 Valores recentes comparados (últimos 12 meses)")
+st.markdown("### 📊 Valores recentes comparados (ano de 2023)")
 st.dataframe(
     df[["Date", "ALLSKY_SFC_SW_DWN", "WS10M", "T2M"]].tail(12).rename(columns={
         "ALLSKY_SFC_SW_DWN": "Radiação (kWh/m²/dia)",
